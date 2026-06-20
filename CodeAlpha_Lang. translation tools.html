@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rishav_Flow Translator - Easy Windows Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .header p {
+            opacity: 0.95;
+            font-size: 15px;
+        }
+
+        .content {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        /* Language Selection Panel */
+        .lang-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .lang-select {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .lang-select label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.3s;
+        }
+
+        select:hover {
+            border-color: #667eea;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .swap-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        .swap-btn:hover {
+            background: #764ba2;
+            transform: rotate(180deg);
+        }
+
+        /* Text Areas */
+        .text-section {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .input-area, .output-area {
+            flex: 1;
+            min-width: 280px;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .area-header {
+            background: #f0f0f0;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .area-header h3 {
+            font-size: 15px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            color: #555;
+        }
+
+        .icon-btn:hover {
+            background: #ddd;
+            transform: scale(1.05);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 20px;
+            border: none;
+            font-size: 15px;
+            line-height: 1.5;
+            resize: vertical;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        textarea:focus {
+            outline: none;
+        }
+
+        .output-area textarea {
+            background: #fefefe;
+        }
+
+        /* Translate Button */
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .translate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .translate-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+        }
+
+        .translate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status {
+            background: #e8f0fe;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            color: #555;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .status.error {
+            background: #fee;
+            color: #c33;
+        }
+
+        .footer {
+            background: #f0f0f0;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            .lang-panel {
+                flex-direction: column;
+            }
+            .swap-btn {
+                align-self: center;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                🌐 Rishav_Flow Translator
+                <span style="font-size: 20px;">⚡</span>
+            </h1>
+            <p>Fast & Free Translation | Copy | Text-to-Speech | Works Offline-Ready</p>
+        </div>
+
+        <div class="content">
+            <!-- Language Selection -->
+            <div class="lang-panel">
+                <div class="lang-select">
+                    <label>📤 FROM (SOURCE)</label>
+                    <select id="sourceLang">
+                        <option value="auto">🔍 Auto Detect</option>
+                        <option value="en" selected>🇬🇧 English</option>
+                        <option value="es">🇪🇸 Spanish</option>
+                        <option value="fr">🇫🇷 French</option>
+                        <option value="de">🇩🇪 German</option>
+                        <option value="it">🇮🇹 Italian</option>
+                        <option value="pt">🇵🇹 Portuguese</option>
+                        <option value="ru">🇷🇺 Russian</option>
+                        <option value="zh">🇨🇳 Chinese (Simplified)</option>
+                        <option value="ja">🇯🇵 Japanese</option>
+                        <option value="ko">🇰🇷 Korean</option>
+                        <option value="ar">🇸🇦 Arabic</option>
+                        <option value="hi">🇮🇳 Hindi</option>
+                        <option value="nl">🇳🇱 Dutch</option>
+                        <option value="tr">🇹🇷 Turkish</option>
+                        <option value="vi">🇻🇳 Vietnamese</option>
+                        <option value="th">🇹🇭 Thai</option>
+                        <option value="pl">🇵🇱 Polish</option>
+                        <option value="uk">🇺🇦 Ukrainian</option>
+                        <option value="sv">🇸🇪 Swedish</option>
+                        <option value="he">🇮🇱 Hebrew</option>
+                    </select>
+                </div>
+
+                <button class="swap-btn" id="swapBtn" title="Swap Languages">⇄</button>
+
+                <div class="lang-select">
+                    <label>📥 TO (TARGET)</label>
+                    <select id="targetLang">
+                        <option value="es">🇪🇸 Spanish</option>
+                        <option value="fr">🇫🇷 French</option>
+                        <option value="de">🇩🇪 German</option>
+                        <option value="it">🇮🇹 Italian</option>
+                        <option value="pt">🇵🇹 Portuguese</option>
+                        <option value="en" selected>🇬🇧 English</option>
+                        <option value="ru">🇷🇺 Russian</option>
+                        <option value="zh">🇨🇳 Chinese</option>
+                        <option value="ja">🇯🇵 Japanese</option>
+                        <option value="ko">🇰🇷 Korean</option>
+                        <option value="ar">🇸🇦 Arabic</option>
+                        <option value="hi">🇮🇳 Hindi</option>
+                        <option value="nl">🇳🇱 Dutch</option>
+                        <option value="tr">🇹🇷 Turkish</option>
+                        <option value="vi">🇻🇳 Vietnamese</option>
+                        <option value="th">🇹🇭 Thai</option>
+                        <option value="pl">🇵🇱 Polish</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Text Areas -->
+            <div class="text-section">
+                <div class="input-area">
+                    <div class="area-header">
+                        <h3>✏️ Enter Text</h3>
+                        <div class="btn-group">
+                            <button class="icon-btn" id="clearBtn" title="Clear Text">🗑️ Clear</button>
+                        </div>
+                    </div>
+                    <textarea id="sourceText" placeholder="Type or paste your text here...&#10;&#10;Example: Hello, how are you today?&#10;Or paste any text to translate..."></textarea>
+                </div>
+
+                <div class="output-area">
+                    <div class="area-header">
+                        <h3>🎯 Translation Result</h3>
+                        <div class="btn-group">
+                            <button class="icon-btn" id="copyBtn" title="Copy Translation">📋 Copy</button>
+                            <button class="icon-btn" id="speakBtn" title="Listen to Translation">🔊 Speak</button>
+                        </div>
+                    </div>
+                    <textarea id="translatedText" placeholder="Translation will appear here..." readonly></textarea>
+                </div>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="action-bar">
+                <button class="translate-btn" id="translateBtn">
+                    <span>🔄</span> Translate Now
+                </button>
+                <div class="status" id="statusMsg">
+                    ✅ Ready to translate
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            💡 Powered by MyMemory Translation API (Free) | Supports 50+ languages | Click 🔊 to hear translation | Copy with one click
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const sourceLangSelect = document.getElementById('sourceLang');
+        const targetLangSelect = document.getElementById('targetLang');
+        const sourceTextarea = document.getElementById('sourceText');
+        const translatedTextarea = document.getElementById('translatedText');
+        const translateBtn = document.getElementById('translateBtn');
+        const swapBtn = document.getElementById('swapBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const speakBtn = document.getElementById('speakBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // Helper: Update status message
+        function updateStatus(message, isError = false) {
+            statusMsg.textContent = message;
+            if (isError) {
+                statusMsg.classList.add('error');
+            } else {
+                statusMsg.classList.remove('error');
+            }
+            // Auto clear error after 4 seconds
+            if (isError) {
+                setTimeout(() => {
+                    if (statusMsg.textContent === message) {
+                        statusMsg.classList.remove('error');
+                        updateStatus('✅ Ready to translate');
+                    }
+                }, 4000);
+            }
+        }
+
+        // Get language display name from code
+        function getLangName(code) {
+            const langMap = {
+                'auto': 'Auto Detect',
+                'en': 'English', 'es': 'Spanish', 'fr': 'French', 'de': 'German',
+                'it': 'Italian', 'pt': 'Portuguese', 'ru': 'Russian', 'zh': 'Chinese',
+                'ja': 'Japanese', 'ko': 'Korean', 'ar': 'Arabic', 'hi': 'Hindi',
+                'nl': 'Dutch', 'tr': 'Turkish', 'vi': 'Vietnamese', 'th': 'Thai',
+                'pl': 'Polish', 'uk': 'Ukrainian', 'sv': 'Swedish', 'he': 'Hebrew'
+            };
+            return langMap[code] || code.toUpperCase();
+        }
+
+        // Translation function using MyMemory API (Free, no API key needed)
+        async function performTranslation(text, sourceLang, targetLang) {
+            if (!text.trim()) {
+                throw new Error('Please enter some text to translate');
+            }
+
+            // Build language pair: source|target
+            const langPair = `${sourceLang}|${targetLang}`;
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${encodeURIComponent(langPair)}&de=windows_user@example.com`;
+            
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Translation API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            if (data && data.responseData && data.responseData.translatedText) {
+                let translated = data.responseData.translatedText;
+                // Handle case where translation is same as input (rare but possible)
+                if (translated === text && sourceLang !== targetLang && sourceLang !== 'auto') {
+                    console.warn('Translation identical, may need different language pair');
+                }
+                return translated;
+            } else {
+                throw new Error('Invalid response from translation service');
+            }
+        }
+
+        // Main translation handler
+        async function translate() {
+            const sourceText = sourceTextarea.value;
+            
+            if (!sourceText.trim()) {
+                updateStatus('⚠️ Please enter text to translate', true);
+                translatedTextarea.value = '';
+                return;
+            }
+
+            const sourceLang = sourceLangSelect.value;
+            const targetLang = targetLangSelect.value;
+
+            // Disable button during translation
+            translateBtn.disabled = true;
+            const originalBtnText = translateBtn.innerHTML;
+            translateBtn.innerHTML = '<span>⏳</span> Translating...';
+            updateStatus('🔄 Connecting to translation service...');
+
+            try {
+                const result = await performTranslation(sourceText, sourceLang, targetLang);
+                translatedTextarea.value = result;
+                
+                const sourceName = getLangName(sourceLang);
+                const targetName = getLangName(targetLang);
+                updateStatus(`✅ Translation complete! (${sourceName} → ${targetName})`);
+            } catch (error) {
+                console.error('Translation error:', error);
+                updateStatus(`❌ Error: ${error.message}`, true);
+                translatedTextarea.value = '';
+            } finally {
+                translateBtn.disabled = false;
+                translateBtn.innerHTML = originalBtnText;
+            }
+        }
+
+        // Swap source and target languages
+        function swapLanguages() {
+            const srcVal = sourceLangSelect.value;
+            const tgtVal = targetLangSelect.value;
+            
+            // Prevent setting target to 'auto' because API doesn't support target auto
+            let newSource = tgtVal;
+            let newTarget = srcVal;
+            
+            if (newTarget === 'auto') {
+                newTarget = 'en';
+                updateStatus('ℹ️ Auto detection cannot be target, changed to English', false);
+            }
+            
+            sourceLangSelect.value = newSource;
+            targetLangSelect.value = newTarget;
+            
+            // Optional: swap text content for better UX
+            const sourceContent = sourceTextarea.value;
+            const targetContent = translatedTextarea.value;
+            
+            if (targetContent && targetContent.trim() !== '') {
+                sourceTextarea.value = targetContent;
+                translatedTextarea.value = '';
+                updateStatus('🔄 Languages swapped. Click Translate for new result.');
+            } else {
+                translatedTextarea.value = '';
+                updateStatus('🔄 Languages swapped. Ready to translate.');
+            }
+        }
+
+        // Copy translation to clipboard
+        async function copyTranslation() {
+            const translation = translatedTextarea.value;
+            if (!translation.trim()) {
+                updateStatus('📭 Nothing to copy - translation is empty', true);
+                return;
+            }
+            
+            try {
+                await navigator.clipboard.writeText(translation);
+                updateStatus('📋 Translation copied to clipboard!');
+                // Visual feedback on copy button
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✓ Copied!';
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 2000);
+            } catch (err) {
+                // Fallback for older browsers
+                try {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = translation;
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    updateStatus('📋 Translation copied (using fallback method)!');
+                } catch (fallbackErr) {
+                    updateStatus('❌ Failed to copy. Please copy manually.', true);
+                }
+            }
+        }
+
+        // Text-to-Speech functionality
+        function speakTranslation() {
+            const textToSpeak = translatedTextarea.value;
+            if (!textToSpeak || textToSpeak.trim() === '') {
+                updateStatus('🔇 No translation available to speak', true);
+                return;
+            }
+            
+            // Check browser support
+            if (!window.speechSynthesis) {
+                updateStatus('❌ Text-to-speech not supported in this browser', true);
+                return;
+            }
+            
+            // Cancel any ongoing speech
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+            
+            // Set language for better pronunciation
+            let targetLangCode = targetLangSelect.value;
+            const langMap = {
+                'en': 'en-US', 'es': 'es-ES', 'fr': 'fr-FR', 'de': 'de-DE',
+                'it': 'it-IT', 'pt': 'pt-PT', 'ru': 'ru-RU', 'zh': 'zh-CN',
+                'ja': 'ja-JP', 'ko': 'ko-KR', 'ar': 'ar-SA', 'hi': 'hi-IN',
+                'nl': 'nl-NL', 'tr': 'tr-TR', 'vi': 'vi-VN', 'th': 'th-TH',
+                'pl': 'pl-PL', 'uk': 'uk-UA', 'sv': 'sv-SE', 'he': 'he-IL'
+            };
+            
+            utterance.lang = langMap[targetLangCode] || 'en-US';
+            utterance.rate = 0.95;
+            utterance.pitch = 1.0;
+            
+            utterance.onstart = () => updateStatus('🔊 Speaking translation...');
+            utterance.onend = () => updateStatus('✅ Ready');
+            utterance.onerror = (e) => {
+                console.error('Speech error:', e);
+                updateStatus('⚠️ Speech failed. Try again.', true);
+            };
+            
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Clear input and output
+        function clearAll() {
+            sourceTextarea.value = '';
+            translatedTextarea.value = '';
+            updateStatus('✏️ Cleared. Enter new text to translate.');
+            sourceTextarea.focus();
+        }
+
+        // Keyboard shortcut: Ctrl+Enter to translate
+        function handleShortcut(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                translate();
+            }
+        }
+
+        // Auto-detect and show example on load
+        function setExampleText() {
+            sourceTextarea.value = 'Hello! Welcome to Rishav_Flow Translator.\nThis tool is easy to use on Windows.\nSimply type or paste text and click Translate.';
+            // Optional: auto translate example after short delay
+            setTimeout(() => {
+                if (sourceTextarea.value.trim() && !translatedTextarea.value.trim()) {
+                    translate();
+                }
+            }, 500);
+        }
+
+        // Event Listeners
+        translateBtn.addEventListener('click', translate);
+        swapBtn.addEventListener('click', swapLanguages);
+        copyBtn.addEventListener('click', copyTranslation);
+        speakBtn.addEventListener('click', speakTranslation);
+        clearBtn.addEventListener('click', clearAll);
+        sourceTextarea.addEventListener('keydown', handleShortcut);
+        
+        // Add double-click on output to copy
+        translatedTextarea.addEventListener('dblclick', () => {
+            if (translatedTextarea.value.trim()) {
+                copyTranslation();
+            }
+        });
+        
+        // Initialize with example text (user-friendly)
+        setExampleText();
+        
+        // Add helpful tooltips
+        translateBtn.title = "Translate text (Ctrl+Enter)";
+        copyBtn.title = "Copy translation to clipboard";
+        speakBtn.title = "Listen to translation (Text-to-Speech)";
+        swapBtn.title = "Swap source and target languages";
+        
+        console.log('Rishav_Flow Translator ready - Running on Windows');
+    </script>
+</body>
+</html>
